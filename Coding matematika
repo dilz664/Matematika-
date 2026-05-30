@@ -1,0 +1,59 @@
+import sympy as sp
+import numpy as np
+from scipy import integrate, linalg, optimize
+import math
+
+# Inisialisasi variabel simbolik
+x, y, z = sp.symbols('x y z')
+
+def solve_all_math(problem_text):
+    """
+    Menerima input teks masalah matematika, mengembalikan solusi.
+    Contoh: 'integral x^2', 'akar persamaan x^2 - 4 = 0', 'turunan sin(x)'
+    """
+    try:
+        # 1. Coba parsing sebagai ekspresi simbolik
+        expr = sp.sympify(problem_text)
+        # Jika turunan
+        if 'diff' in problem_text or 'turunan' in problem_text:
+            return sp.diff(expr, x)
+        # Integral
+        elif 'integral' in problem_text or 'integrate' in problem_text:
+            return sp.integrate(expr, x)
+        # Sederhanakan
+        else:
+            return sp.simplify(expr)
+    except:
+        pass
+
+    # 2. Persamaan aljabar
+    if '=' in problem_text or 'solve' in problem_text:
+        try:
+            eq = sp.Eq(sp.sympify(problem_text.split('=')[0]), 
+                       sp.sympify(problem_text.split('=')[1]))
+            return sp.solve(eq, x)
+        except:
+            pass
+
+    # 3. Sistem persamaan linear (numerik)
+    # Contoh: 'system 2x+3y=5, x-y=1'
+    # (Di sini kita berikan contoh sederhana)
+    return "Gunakan format: 'integral x**2', 'solve x**2 - 4', 'diff sin(x)'"
+
+# Contoh fungsi interaktif
+def math_solver_cli():
+    print("Matematika Solver Universal (ketik 'exit' untuk keluar)")
+    while True:
+        user = input("Masukkan soal matematika: ")
+        if user.lower() == 'exit':
+            break
+        print("Hasil:", solve_all_math(user))
+
+if __name__ == "__main__":
+    # Demo beberapa soal
+    print("Contoh penggunaan:")
+    print("1. Integral x^2 :", sp.integrate(x**2, x))
+    print("2. Turunan sin(x)*cos(x) :", sp.diff(sp.sin(x)*sp.cos(x), x))
+    print("3. Solve x^2 - 5x + 6 = 0 :", sp.solve(x**2 - 5*x + 6, x))
+    print("4. Matriks 2x2 inverse:\n", sp.Matrix([[2,3],[1,4]]).inv())
+    print("\nJalankan fungsi math_solver_cli() untuk interaktif.")
